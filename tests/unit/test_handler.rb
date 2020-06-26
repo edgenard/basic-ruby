@@ -32,7 +32,7 @@ class ShowFormTest < Test::Unit::TestCase
   def expected_result
     {
       statusCode: 200,
-      headers: {'Content-Type': "text/html"},
+      headers: {'Content-Type': "tex/html"},
       body: html_response
     }
   end
