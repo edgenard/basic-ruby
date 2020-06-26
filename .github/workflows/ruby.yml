@@ -31,3 +31,19 @@ jobs:
       run: bundle install
     - name: Run tests
       run: ruby tests/unit/*
+    - name: AWS SAM build
+      uses: kmccanless/aws-sam-ruby-action@1.0
+      with:
+        sam_command: build
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+    - name: AWS SAM deploy
+      uses: kmccanless/aws-sam-ruby-action@1.0
+      with:
+        sam_command: deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
