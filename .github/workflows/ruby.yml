@@ -30,10 +30,10 @@ jobs:
     - name: Run tests
       run: ruby tests/unit/*
 
- build:
-  runs-on: ubuntu-latest
-  steps:
-    - name: AWS SAM build
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: AWS SAM build
       uses: kmccanless/aws-sam-ruby-action@1.0
       with:
         sam_command: build
@@ -42,7 +42,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
- deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: AWS SAM deploy
