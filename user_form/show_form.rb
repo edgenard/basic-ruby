@@ -1,5 +1,23 @@
 # require 'httparty'
 require "json"
+module HtmlResponse
+  def self.show_form
+    <<~HTML
+      <html>
+      <head>
+      </head>
+      <body>
+      <h1>Hello Please Enter Name</h1>
+      <form method="post">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name">
+      <input type="submit" value="Submit">
+      </form>
+      </body>
+      </html>
+    HTML
+  end
+end
 
 def lambda_handler(event:, context:)
   # Sample pure Lambda function
@@ -30,9 +48,7 @@ def lambda_handler(event:, context:)
 
   {
     statusCode: 200,
-    body: {
-      message: "Hello World!"
-      # location: response.body
-    }.to_json
+    headers: {"Content-Type": "text/html"},
+    body: HtmlResponse.show_form
   }
 end
