@@ -45,7 +45,7 @@ jobs:
       - name: AWS SAM build
         uses: youyo/aws-sam-action/python3.8@master
         with:
-          sam_command: build  -t ../../template.yml
+          sam_command: build
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -54,7 +54,7 @@ jobs:
       - name: AWS SAM deploy
         uses: youyo/aws-sam-action/python3.8@master
         with:
-          sam_command: 'deploy --template-file ../../template.yml --stack-name basic-ruby --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-125yxfjpi5k0i --s3-prefix basic-ruby --capabilities CAPABILITY_IAM'
+          sam_command: 'deploy  --stack-name basic-ruby --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-125yxfjpi5k0i --s3-prefix basic-ruby --capabilities CAPABILITY_IAM'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
