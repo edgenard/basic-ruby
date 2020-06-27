@@ -46,6 +46,7 @@ def lambda_handler(event:, context:)
   #   raise error
   # end
   p "This is to test that deployment works"
+  p "Deployment maybe not working as expected"
   {
     statusCode: 200,
     headers: {"Content-Type": "text/html"},
