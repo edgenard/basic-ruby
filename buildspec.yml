@@ -10,6 +10,4 @@ phases:
     commands:
       - ruby tests/unit/*
       - sam build
-artifacts:
-  files:
-    - template.yaml
+      - sam deploy
