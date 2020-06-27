@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+       ruby: 2.7.1
+    commands:
+      - bundle install
+  build:
+    commands:
+      - ruby tests/unit/*
+      - sam build
+artifacts:
+  files:
+    - template.yaml
