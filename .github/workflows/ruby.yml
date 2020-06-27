@@ -30,9 +30,15 @@ jobs:
     - name: Run tests
       run: ruby tests/unit/*
 
-  build_deploy:
+  test_build_deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Run tests
+        uses: kmccanless/aws-sam-ruby-action@1.0
+      - name: Install Dependencies
+        run: bundle install
+      - name: Run tests
+        run: ruby tests/unit/*
       - name: AWS SAM build
         uses: kmccanless/aws-sam-ruby-action@1.0
         with:
