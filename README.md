@@ -1,6 +1,5 @@
 
 Github Actions Badge
-![Ruby](https://github.com/edgenard/basic-ruby/workflows/Ruby/badge.svg)
 
 # basic-ruby
 
