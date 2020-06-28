@@ -45,7 +45,6 @@ def lambda_handler(event:, context:)
   #   puts error.inspect
   #   raise error
   # end
-  p "This one went through CodePipeline"
   {
     statusCode: 200,
     headers: {"Content-Type": "text/html"},
