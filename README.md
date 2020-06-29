@@ -1,5 +1,4 @@
 
-Github Actions Badge
 
 # basic-ruby
 
