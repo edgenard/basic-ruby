@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      ruby: 2.7
+  pre_build:
+    commands:
+      - bundle install
+      - bundle exec standardrb
+      - bundle exec rspec
+  build:
+    commands:
+      - sam build
+  post_build:
+    commands:
+      sam deploy
