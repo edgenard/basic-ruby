@@ -25,7 +25,22 @@ Resources:
             Method: get
       AutoPublishAlias: live
       DeploymentPreference:
-        Type: Linear10PercentEvery1Minute
+        Type: AllAtOnce
+  ProcessFormFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: user_form/
+      Handler: process_form.UserForm::ProcessForm.handler
+      Runtime: ruby2.7
+      Events:
+        ProcessForm:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: post
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
