@@ -4,7 +4,7 @@ module UserForm
   class ProcessForm
     def self.handler(event:, context:)
       client = Aws::S3::Client.new(region: ENV["AWS_REGION"])
-      client.put_object(bucket: ENV["PROCESS_FORM_BUCKET"], key: context.aws_request_id)
+      client.put_object(bucket: ENV["PROCESS_FORM_BUCKET"], key: context.aws_request_id, body: event[:body])
       response = HtmlResponse.successfully_processed_form(context.aws_request_id)
       {
         statusCode: 201,

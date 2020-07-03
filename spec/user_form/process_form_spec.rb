@@ -57,7 +57,7 @@ RSpec.describe UserForm::ProcessForm do
   end
 
   it "uploads the form submission to the S3 bucket" do
-    expect(fake_s3_client).to receive(:put_object).with(bucket: process_form_bucket, key: context.aws_request_id)
+    expect(fake_s3_client).to receive(:put_object).with(bucket: process_form_bucket, key: context.aws_request_id, body: process_form_event[:body])
 
     handler
   end
