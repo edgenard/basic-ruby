@@ -5,10 +5,10 @@ module HtmlResponse
       <head>
       </head>
       <body>
-      <h1>Hello Please Enter Name</h1>
-      <form method="post">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name">
+      <h1>Upload a JPEG</h1>
+      <form method="post" enctype="multipart/form-data">
+      <label for="file">File:</label>
+      <input type="file" id="file" name="file" accept="image/jpeg, image/jpg">
       <input type="submit" value="Submit">
       </form>
       </body>
