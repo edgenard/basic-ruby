@@ -38,10 +38,20 @@ Resources:
           Properties:
             Path: /hello
             Method: post
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref ProcessFormBucket
+      Environment:
+        Variables:
+          PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
+          AWS_REGION: us-east-1
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
-
+  ProcessFormBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: basic-ruby-process-form
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -55,3 +65,9 @@ Outputs:
   ShowFormFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt ShowFormFunctionRole.Arn
+  ProcessFormFunction:
+    Description: "Function to process form submissions"
+    Value: !GetAtt ProcessFormFunction.Arn
+  ProcessFormBucket:
+    Description: "S3 Bucket that stores form submissions"
+    Value: !Ref ProcessFormBucket
