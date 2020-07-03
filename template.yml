@@ -15,7 +15,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: user_form/
-      Handler: show_form.lambda_handler
+      Handler: show_form.UserForm::ShowForm.handler
       Runtime: ruby2.7
       Events:
         ShowForm:

@@ -2,7 +2,7 @@ require "spec_helper"
 require "json"
 require_relative "../../user_form/show_form"
 
-RSpec.describe "#lambda_handler" do
+RSpec.describe UserForm::ShowForm do
   let(:show_form_event) {
     JSON.parse(File.read("spec/fixtures/show_form.json"))
   }
@@ -29,7 +29,7 @@ RSpec.describe "#lambda_handler" do
       body: html_response
     }
   end
-  subject(:handler) { lambda_handler(event: show_form_event, context: "") }
+  subject(:handler) { UserForm::ShowForm.handler(event: show_form_event, context: "") }
 
   it "returns an html form" do
     expect(handler).to eq(expected_result)
