@@ -1,6 +1,6 @@
 {
   "httpMethod": "POST",
-  "body": "name=Show+what+the+response+looks+like",
+  "body": "name=Test+submission",
   "resource": "/hello",
   "requestContext": {
     "resourceId": "123456",

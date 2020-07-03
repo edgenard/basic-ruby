@@ -42,14 +42,16 @@ RSpec.describe UserForm::ProcessForm do
   }
 
   let(:fake_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-  let(:process_form_bucket) { "process-form-bucket" }
+  let(:process_form_bucket) { "test-bucket" }
+  let(:region) { "test-region" }
+  let(:object_body) { {name: "Test submission"}.to_json }
 
   subject(:handler) { UserForm::ProcessForm.handler(event: process_form_event, context: context) }
 
   before do
-    ENV["AWS_REGION"] = "us-east-1"
+    ENV["AWS_REGION"] = region
     ENV["PROCESS_FORM_BUCKET"] = process_form_bucket
-    allow(Aws::S3::Client).to receive(:new).with(region: "us-east-1").and_return(fake_s3_client)
+    allow(Aws::S3::Client).to receive(:new).with(region: region).and_return(fake_s3_client)
   end
 
   it "returns a message thanking the user for their submission" do
@@ -57,7 +59,7 @@ RSpec.describe UserForm::ProcessForm do
   end
 
   it "uploads the form submission to the S3 bucket" do
-    expect(fake_s3_client).to receive(:put_object).with(bucket: process_form_bucket, key: context.aws_request_id, body: process_form_event["body"])
+    expect(fake_s3_client).to receive(:put_object).with(bucket: process_form_bucket, key: context.aws_request_id, body: object_body)
 
     handler
   end
