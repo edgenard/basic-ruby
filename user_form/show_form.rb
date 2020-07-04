@@ -32,8 +32,21 @@ module UserForm
       {
         statusCode: 200,
         headers: {"Content-Type": "text/html"},
-        body: HtmlResponse.show_form
+        body: HtmlResponse.upload_form(form_options(event: event, context: context))
       }
+    end
+
+    def self.form_options(event:, context:)
+      bucket = Aws::S3::Resource.new(region: ENV["AWS_REGION"]).bucket(ENV["PROCESS_FORM_BUCKET"])
+      request_context = event["requestContext"]
+      redirect_url = "https://#{request_context["domainName"]}/#{request_context["stage"]}/confirm"
+      bucket.presigned_post(
+        key: context.aws_request_id,
+        acl: "private",
+        success_action_redirect: redirect_url,
+        content_type: "image/jpeg",
+        server_side_encryption: "aws:kms"
+      )
     end
   end
 end

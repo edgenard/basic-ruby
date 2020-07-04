@@ -26,6 +26,12 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref ProcessFormBucket
+      Environment:
+        Variables:
+          PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
   ProcessFormFunction:
     Type: AWS::Serverless::Function
     Properties:
