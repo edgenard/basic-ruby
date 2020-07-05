@@ -1,7 +1,7 @@
 require_relative "./html_response"
 require "aws-sdk-s3"
 module UserForm
-  class ProcessForm
+  class ConfirmUpload
     def self.handler(event:, context:)
       body = URI.decode_www_form(event["body"]).to_h.to_json
       client = Aws::S3::Client.new(region: ENV["AWS_REGION"])

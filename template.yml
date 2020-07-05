@@ -32,18 +32,18 @@ Resources:
       Environment:
         Variables:
           PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
-  ProcessFormFunction:
+  ConfirmUploadFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: user_form/
-      Handler: process_form.UserForm::ProcessForm.handler
+      Handler: confirm_upload.UserForm::ConfirmUpload.handler
       Runtime: ruby2.7
       Events:
-        ProcessForm:
+        ConfirmUpload:
           Type: Api
           Properties:
-            Path: /hello
-            Method: post
+            Path: /confirm
+            Method: get
       Policies:
         - S3FullAccessPolicy:
             BucketName: !Ref ProcessFormBucket
@@ -70,9 +70,9 @@ Outputs:
   ShowFormFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt ShowFormFunctionRole.Arn
-  ProcessFormFunction:
+  ConfirmUploadFunction:
     Description: "Function to process form submissions"
-    Value: !GetAtt ProcessFormFunction.Arn
+    Value: !GetAtt ConfirmUploadFunction.Arn
   ProcessFormBucket:
     Description: "S3 Bucket that stores form submissions"
     Value: !Ref ProcessFormBucket

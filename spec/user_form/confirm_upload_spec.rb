@@ -1,5 +1,5 @@
 require "spec_helper"
-require_relative "../../user_form/process_form"
+require_relative "../../user_form/confirm_upload"
 
 class FakeLambdaContext
   attr_accessor :function_name, :function_version, :invoked_function_arn,
@@ -11,7 +11,7 @@ class FakeLambdaContext
   end
 end
 
-RSpec.describe UserForm::ProcessForm do
+RSpec.describe UserForm::ConfirmUpload do
   let(:process_form_event) {
     JSON.parse(File.read("spec/fixtures/process_form.json"))
   }
@@ -46,7 +46,7 @@ RSpec.describe UserForm::ProcessForm do
   let(:region) { "test-region" }
   let(:object_body) { {name: "Test submission"}.to_json }
 
-  subject(:handler) { UserForm::ProcessForm.handler(event: process_form_event, context: context) }
+  subject(:handler) { UserForm::ConfirmUpload.handler(event: process_form_event, context: context) }
 
   before do
     ENV["AWS_REGION"] = region
