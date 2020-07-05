@@ -1,6 +1,7 @@
 # require 'httparty'
 require "json"
 require_relative "./html_response"
+require "aws-sdk-s3"
 # Sample pure Lambda function
 
 # Parameters
