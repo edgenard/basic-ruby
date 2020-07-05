@@ -12,13 +12,9 @@ class FakeLambdaContext
 end
 
 RSpec.describe UserForm::ConfirmUpload do
-  let(:process_form_event) {
-    JSON.parse(File.read("spec/fixtures/process_form.json"))
+  let(:confirm_upload_event) {
+    JSON.parse(File.read("spec/fixtures/confirm_upload.json"))
   }
-  let(:context) { FakeLambdaContext.new }
-  before do
-    context.aws_request_id = "some-unique-random-stuff"
-  end
 
   let(:process_form_response) do
     <<~HTML
@@ -27,7 +23,7 @@ RSpec.describe UserForm::ConfirmUpload do
       </head>
       <body>
       <h1>Thank You for your submission</h1>
-      <h2>Your submission id is #{context.aws_request_id}</h2>
+      <h2>Your submission id is #{confirm_upload_event["queryStringParameters"]["key"]}</h2>
       </body>
       </html>
     HTML
@@ -35,32 +31,19 @@ RSpec.describe UserForm::ConfirmUpload do
 
   let(:expected_result) {
     {
-      statusCode: 201,
+      statusCode: 200,
       headers: {'Content-Type': "text/html"},
       body: process_form_response
     }
   }
 
-  let(:fake_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-  let(:process_form_bucket) { "test-bucket" }
-  let(:region) { "test-region" }
-  let(:object_body) { {name: "Test submission"}.to_json }
-
-  subject(:handler) { UserForm::ConfirmUpload.handler(event: process_form_event, context: context) }
-
-  before do
-    ENV["AWS_REGION"] = region
-    ENV["PROCESS_FORM_BUCKET"] = process_form_bucket
-    allow(Aws::S3::Client).to receive(:new).with(region: region).and_return(fake_s3_client)
-  end
+  subject(:handler) { UserForm::ConfirmUpload.handler(event: confirm_upload_event, context: FakeLambdaContext.new) }
 
   it "returns a message thanking the user for their submission" do
-    expect(handler).to eq(expected_result)
+    expect(handler[:statusCode]).to eq(expected_result[:statusCode])
   end
 
-  it "uploads the form submission to the S3 bucket" do
-    expect(fake_s3_client).to receive(:put_object).with(bucket: process_form_bucket, key: context.aws_request_id, body: object_body)
-
-    handler
+  it "returns a thank you message with the right submission id" do
+    expect(handler[:body]).to eq(expected_result[:body])
   end
 end
