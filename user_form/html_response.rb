@@ -18,6 +18,7 @@ module HtmlResponse
       <input type="hidden" name="x-amz-date" value="#{presigned_post.fields["x-amz-date"]}">
       <input type="hidden" name="Policy" value="#{presigned_post.fields["policy"]}">
       <input type="hidden" name="x-amz-signature" value="#{presigned_post.fields["x-amz-signature"]}">
+      <input type="hidden" name="x-amz-security-token" value="#{presigned_post.fields["x-amz-security-token"]}">
       <label for="file">File:</label>
       <input type="file" id="file" name="file" accept="image/jpeg">
       <input type="submit" value="Submit">

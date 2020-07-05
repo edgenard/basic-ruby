@@ -62,6 +62,7 @@ RSpec.describe UserForm::ShowForm do
       <input type="hidden" name="x-amz-date" value="#{stub_presgined_post.fields["x-amz-date"]}">
       <input type="hidden" name="Policy" value="#{stub_presgined_post.fields["policy"]}">
       <input type="hidden" name="x-amz-signature" value="#{stub_presgined_post.fields["x-amz-signature"]}">
+      <input type="hidden" name="x-amz-security-token" value="#{stub_presgined_post.fields["x-amz-security-token"]}">
       <label for="file">File:</label>
       <input type="file" id="file" name="file" accept="image/jpeg">
       <input type="submit" value="Submit">
