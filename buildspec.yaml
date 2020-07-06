@@ -14,4 +14,4 @@ phases:
       - sam build
   post_build:
     commands:
-      sam deploy
+      sam deploy --parameter-overrides UrlExpiration=1 MaxFileSize=15
