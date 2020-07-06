@@ -15,6 +15,19 @@ RSpec.describe UserForm::ConfirmUpload do
   let(:confirm_upload_event) {
     JSON.parse(File.read("spec/fixtures/confirm_upload.json"))
   }
+  let(:region) { "test-region" }
+  let(:key) { confirm_upload_event["queryStringParameters"]["key"] }
+  let(:bucket) { "test-bucket" }
+
+  let(:s3_presigned_url) do
+    Aws::S3::Presigner.new(region: region)
+      .presigned_url(:get_object, bucket: bucket, key: key)
+  end
+
+  before do
+    ENV["AWS_REGION"] = region
+    ENV["PROCESS_FORM_BUCKET"] = bucket
+  end
 
   let(:process_form_response) do
     <<~HTML
@@ -23,7 +36,8 @@ RSpec.describe UserForm::ConfirmUpload do
       </head>
       <body>
       <h1>Thank You for your submission</h1>
-      <h2>Your submission id is #{confirm_upload_event["queryStringParameters"]["key"]}</h2>
+      <h2>Your submission id is #{key}</h2>
+      <p>You can download your submission by <a href="#{s3_presigned_url}">clicking here</a></p>
       </body>
       </html>
     HTML

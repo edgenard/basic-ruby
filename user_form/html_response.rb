@@ -28,7 +28,7 @@ module HtmlResponse
     HTML
   end
 
-  def self.successfully_processed_form(submission_id)
+  def self.successfully_processed_form(submission_id, download_url)
     <<~HTML
       <html>
       <head>
@@ -36,6 +36,7 @@ module HtmlResponse
       <body>
       <h1>Thank You for your submission</h1>
       <h2>Your submission id is #{submission_id}</h2>
+      <p>You can download your submission by <a href="#{download_url}">clicking here</a></p>
       </body>
       </html>
     HTML
