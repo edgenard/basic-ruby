@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  variables:
+    UrlExpiration: "3"
+    MaxFileSize: "12"
+
 phases:
   install:
     runtime-versions:
@@ -14,4 +19,4 @@ phases:
       - sam build
   post_build:
     commands:
-      sam deploy --parameter-overrides UrlExpiration=1 MaxFileSize=15
+      sam deploy --parameter-overrides UrlExpiration=$UrlExpiration MaxFileSize=$MaxFileSize
