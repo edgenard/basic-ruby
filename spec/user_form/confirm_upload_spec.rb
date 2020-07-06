@@ -18,15 +18,17 @@ RSpec.describe UserForm::ConfirmUpload do
   let(:region) { "test-region" }
   let(:key) { confirm_upload_event["queryStringParameters"]["key"] }
   let(:bucket) { "test-bucket" }
+  let(:url_expiration_time) { 1 }
 
   let(:s3_presigned_url) do
     Aws::S3::Presigner.new(region: region)
-      .presigned_url(:get_object, bucket: bucket, key: key)
+      .presigned_url(:get_object, bucket: bucket, key: key, expires_in: 1 * 60)
   end
 
   before do
     ENV["AWS_REGION"] = region
     ENV["PROCESS_FORM_BUCKET"] = bucket
+    ENV["URL_EXPIRATION"] = url_expiration_time.to_s
   end
 
   let(:process_form_response) do
