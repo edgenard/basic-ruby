@@ -9,6 +9,21 @@ Description: >
 Globals:
   Function:
     Timeout: 3
+Parameters:
+  MaxFileSize:
+    Type: Number
+    Description: The max size in MB of the file being uploaded
+    Default: 5
+    MaxValue: 25
+    MinValue: 5
+    ConstraintDescription: The max file size is can only be between 5MB and 25MB
+  UrlExpiration:
+    Type: Number
+    Default: 10
+    Description: The  max length of time in minutes that the user has to upload or download a file
+    MinValue: 1
+    MaxValue: 20
+    ConstraintDescription: The minimum expiration time for a link 1 minute. The maxium expiration time is 20 minutes.
 
 Resources:
   ShowFormFunction:
@@ -32,6 +47,8 @@ Resources:
       Environment:
         Variables:
           PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
+          MAX_FILE_SIZE: !Ref MaxFileSize
+          URL_EXPIRATION: !Ref UrlExpiration
   ConfirmUploadFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -50,6 +67,7 @@ Resources:
       Environment:
         Variables:
           PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
+          URL_EXPIRATION: !Ref UrlExpiration
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce

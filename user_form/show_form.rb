@@ -41,14 +41,16 @@ module UserForm
       bucket = Aws::S3::Resource.new(region: ENV["AWS_REGION"]).bucket(ENV["PROCESS_FORM_BUCKET"])
       request_context = event["requestContext"]
       redirect_url = "https://#{request_context["domainName"]}/#{request_context["stage"]}/confirm"
+      max_file_size = ENV["MAX_FILE_SIZE"].to_i * 1_000_000
+      url_expiration = ENV["URL_EXPIRATION"].to_i * 60
       bucket.presigned_post(
         key: context.aws_request_id,
         acl: "private",
         success_action_redirect: redirect_url,
         content_type: "image/jpeg",
         server_side_encryption: "aws:kms",
-        signature_expiration: Time.now + 600,
-        content_length_range: 0...5000000
+        signature_expiration: Time.now + url_expiration,
+        content_length_range: 0...max_file_size
       )
     end
   end
