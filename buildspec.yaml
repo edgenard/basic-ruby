@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     UrlExpiration: "1"
-    MaxFileSize: "3"
+    MaxFileSize: "5"
 
 phases:
   install:
