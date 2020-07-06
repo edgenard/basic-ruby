@@ -32,7 +32,9 @@ RSpec.describe UserForm::ShowForm do
       acl: "private",
       success_action_redirect: confirm_upload_endpoint,
       content_type: "image/jpeg",
-      server_side_encryption: "aws:kms"
+      server_side_encryption: "aws:kms",
+      signature_expiration: Time.now + 600,
+      content_length_range: 0...5000000
     )
   end
 
