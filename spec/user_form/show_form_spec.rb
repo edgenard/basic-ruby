@@ -53,7 +53,7 @@ RSpec.describe UserForm::ShowForm do
   let(:presigned_post_fields) do
     stub_presigned_post.fields.map { |k, v| "<input type=\"hidden\" name=\"#{k}\" value=\"#{v}\">" }
   end
-  let(:html_response) do
+  let(:form_page) do
     <<~HTML
       <html>
       <head>
@@ -71,18 +71,47 @@ RSpec.describe UserForm::ShowForm do
       </html>
     HTML
   end
-  let(:expected_result) do
+  let(:default_response) do
     {
       statusCode: 200,
       headers: {'Content-Type': "text/html"},
-      body: html_response
+      body: form_page
     }
   end
   subject(:handler) { UserForm::ShowForm.handler(event: show_form_event, context: lambda_context) }
 
   it "returns an html form" do
-    expect(handler[:statusCode]).to eq(expected_result[:statusCode])
-    expect(handler[:headers]).to eq(expected_result[:headers])
-    expect(handler[:body]).to eq(expected_result[:body])
+    expect(handler[:statusCode]).to eq(default_response[:statusCode])
+    expect(handler[:headers]).to eq(default_response[:headers])
+    expect(handler[:body]).to eq(default_response[:body])
+  end
+
+  context "when an error occurs processing the request" do
+    let(:error_response) do
+      default_response.merge({body: error_page})
+    end
+    let(:error_message) { "Error Creating Form Somehow" }
+    let(:error_page) do
+      <<~HTML
+        <html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        </head>
+        <body>
+        <h1>Error Processing Request</h1>
+        <p>#{error_message}</p>
+        </body>
+        </html>
+      HTML
+    end
+
+    before do
+      allow(HtmlResponse).to receive(:upload_form).and_raise(error_message)
+    end
+    it "returns an error page" do
+      expect(handler[:statusCode]).to eq(error_response[:statusCode])
+      expect(handler[:headers]).to eq(error_response[:headers])
+      expect(handler[:body]).to eq(error_response[:body])
+    end
   end
 end

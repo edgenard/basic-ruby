@@ -37,4 +37,18 @@ module HtmlResponse
       </html>
     HTML
   end
+
+  def self.error_page(error_message)
+    <<~HTML
+      <html>
+      <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+      <body>
+      <h1>Error Processing Request</h1>
+      <p>#{error_message}</p>
+      </body>
+      </html>
+    HTML
+  end
 end
