@@ -35,6 +35,12 @@ module UserForm
         headers: {"Content-Type": "text/html"},
         body: HtmlResponse.upload_form(form_options(event: event, context: context))
       }
+    rescue => e
+      {
+        statusCode: 200,
+        headers: {"Content-Type": "text/html"},
+        body: HtmlResponse.error_page(e.message)
+      }
     end
 
     def self.form_options(event:, context:)

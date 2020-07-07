@@ -28,7 +28,7 @@ RSpec.describe UserForm::ShowForm do
   }
   let(:max_file_size) { 20 }
   let(:url_expiration_time) { 15 }
-  let(:stub_presgined_post) do
+  let(:stub_presigned_post) do
     stub_bucket.presigned_post(
       key: lambda_context.aws_request_id,
       acl: "private",
@@ -49,7 +49,11 @@ RSpec.describe UserForm::ShowForm do
     allow(Aws::S3::Resource).to receive(:new).with(region: region).and_return(stub_resource)
     allow(stub_resource).to receive(:bucket).with(bucket_name).and_return(stub_bucket)
   end
-  let(:html_response) do
+
+  let(:presigned_post_fields) do
+    stub_presigned_post.fields.map { |k, v| "<input type=\"hidden\" name=\"#{k}\" value=\"#{v}\">" }
+  end
+  let(:form_page) do
     <<~HTML
       <html>
       <head>
@@ -58,17 +62,7 @@ RSpec.describe UserForm::ShowForm do
       <body>
       <h1>Upload a JPEG</h1>
       <form action="https://#{bucket_name}.s3.#{region}.amazonaws.com" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="key" value="#{lambda_context.aws_request_id}">
-      <input type="hidden" name="acl" value="private">
-      <input type="hidden" name="success_action_redirect" value="#{confirm_upload_endpoint}">
-      <input type="hidden" name="Content-Type" value="image/jpeg">
-      <input type="hidden" name="x-amz-server-side-encryption" value="aws:kms">
-      <input type="hidden" name="x-amz-credential" value="#{stub_presgined_post.fields["x-amz-credential"]}">
-      <input type="hidden" name="x-amz-algorithm" value="#{stub_presgined_post.fields["x-amz-algorithm"]}">
-      <input type="hidden" name="x-amz-date" value="#{stub_presgined_post.fields["x-amz-date"]}">
-      <input type="hidden" name="Policy" value="#{stub_presgined_post.fields["policy"]}">
-      <input type="hidden" name="x-amz-signature" value="#{stub_presgined_post.fields["x-amz-signature"]}">
-      <input type="hidden" name="x-amz-security-token" value="#{stub_presgined_post.fields["x-amz-security-token"]}">
+      #{presigned_post_fields.join("\n")}
       <label for="file">File:</label>
       <input type="file" id="file" name="file" accept="image/jpeg">
       <input type="submit" value="Submit">
@@ -77,18 +71,47 @@ RSpec.describe UserForm::ShowForm do
       </html>
     HTML
   end
-  let(:expected_result) do
+  let(:default_response) do
     {
       statusCode: 200,
       headers: {'Content-Type': "text/html"},
-      body: html_response
+      body: form_page
     }
   end
   subject(:handler) { UserForm::ShowForm.handler(event: show_form_event, context: lambda_context) }
 
   it "returns an html form" do
-    expect(handler[:statusCode]).to eq(expected_result[:statusCode])
-    expect(handler[:headers]).to eq(expected_result[:headers])
-    expect(handler[:body]).to eq(expected_result[:body])
+    expect(handler[:statusCode]).to eq(default_response[:statusCode])
+    expect(handler[:headers]).to eq(default_response[:headers])
+    expect(handler[:body]).to eq(default_response[:body])
+  end
+
+  context "when an error occurs processing the request" do
+    let(:error_response) do
+      default_response.merge({body: error_page})
+    end
+    let(:error_message) { "Error Creating Form Somehow" }
+    let(:error_page) do
+      <<~HTML
+        <html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        </head>
+        <body>
+        <h1>Error Processing Request</h1>
+        <p>#{error_message}</p>
+        </body>
+        </html>
+      HTML
+    end
+
+    before do
+      allow(HtmlResponse).to receive(:upload_form).and_raise(error_message)
+    end
+    it "returns an error page" do
+      expect(handler[:statusCode]).to eq(error_response[:statusCode])
+      expect(handler[:headers]).to eq(error_response[:headers])
+      expect(handler[:body]).to eq(error_response[:body])
+    end
   end
 end

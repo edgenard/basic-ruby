@@ -1,10 +1,13 @@
 {
   "ProcessFormFunction": {
     "PROCESS_FORM_BUCKET": "basic-ruby-process-form",
-    "AWS_REGION": "us-east-1"
+    "AWS_REGION": "us-east-1",
+    "URL_EXPIRATION": "3"
   },
   "ShowFormFunction": {
     "PROCESS_FORM_BUCKET": "basic-ruby-process-form",
-    "AWS_REGION": "us-east-1"
+    "AWS_REGION": "us-east-1",
+    "URL_EXPIRATION": "3",
+    "MAX_FILE_SIZE": "10"
   }
 }

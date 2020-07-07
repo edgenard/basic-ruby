@@ -31,7 +31,7 @@ RSpec.describe UserForm::ConfirmUpload do
     ENV["URL_EXPIRATION"] = url_expiration_time.to_s
   end
 
-  let(:process_form_response) do
+  let(:success_html) do
     <<~HTML
       <html>
       <head>
@@ -45,21 +45,46 @@ RSpec.describe UserForm::ConfirmUpload do
     HTML
   end
 
-  let(:expected_result) {
+  let(:success_response) {
     {
       statusCode: 200,
       headers: {'Content-Type': "text/html"},
-      body: process_form_response
+      body: success_html
     }
   }
 
   subject(:handler) { UserForm::ConfirmUpload.handler(event: confirm_upload_event, context: FakeLambdaContext.new) }
 
   it "returns a message thanking the user for their submission" do
-    expect(handler[:statusCode]).to eq(expected_result[:statusCode])
+    expect(handler[:statusCode]).to eq(success_response[:statusCode])
   end
 
   it "returns a thank you message with the right submission id" do
-    expect(handler[:body]).to eq(expected_result[:body])
+    expect(handler[:body]).to eq(success_response[:body])
+  end
+
+  context "when there is an error processing the request" do
+    let(:error_response) { success_response.merge(body: error_html) }
+    let(:error_message) { "Some error processing the page" }
+    let(:error_html) do
+      <<~HTML
+        <html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        </head>
+        <body>
+        <h1>Error Processing Request</h1>
+        <p>#{error_message}</p>
+        </body>
+        </html>
+      HTML
+    end
+
+    before do
+      allow(HtmlResponse).to receive(:successfully_processed_form).and_raise(error_message)
+    end
+    it "returns an error page" do
+      expect(handler[:body]).to eq(error_response[:body])
+    end
   end
 end

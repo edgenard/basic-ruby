@@ -16,6 +16,12 @@ module UserForm
         headers: {'Content-Type': "text/html"},
         body: response
       }
+    rescue => e
+      {
+        statusCode: 200,
+        headers: {'Content-Type': "text/html"},
+        body: HtmlResponse.error_page(e.message)
+      }
     end
   end
 end
