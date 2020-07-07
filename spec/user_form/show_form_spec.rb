@@ -28,7 +28,7 @@ RSpec.describe UserForm::ShowForm do
   }
   let(:max_file_size) { 20 }
   let(:url_expiration_time) { 15 }
-  let(:stub_presgined_post) do
+  let(:stub_presigned_post) do
     stub_bucket.presigned_post(
       key: lambda_context.aws_request_id,
       acl: "private",
@@ -49,6 +49,10 @@ RSpec.describe UserForm::ShowForm do
     allow(Aws::S3::Resource).to receive(:new).with(region: region).and_return(stub_resource)
     allow(stub_resource).to receive(:bucket).with(bucket_name).and_return(stub_bucket)
   end
+
+  let(:presigned_post_fields) do
+    stub_presigned_post.fields.map { |k, v| "<input type=\"hidden\" name=\"#{k}\" value=\"#{v}\">" }
+  end
   let(:html_response) do
     <<~HTML
       <html>
@@ -58,17 +62,7 @@ RSpec.describe UserForm::ShowForm do
       <body>
       <h1>Upload a JPEG</h1>
       <form action="https://#{bucket_name}.s3.#{region}.amazonaws.com" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="key" value="#{lambda_context.aws_request_id}">
-      <input type="hidden" name="acl" value="private">
-      <input type="hidden" name="success_action_redirect" value="#{confirm_upload_endpoint}">
-      <input type="hidden" name="Content-Type" value="image/jpeg">
-      <input type="hidden" name="x-amz-server-side-encryption" value="aws:kms">
-      <input type="hidden" name="x-amz-credential" value="#{stub_presgined_post.fields["x-amz-credential"]}">
-      <input type="hidden" name="x-amz-algorithm" value="#{stub_presgined_post.fields["x-amz-algorithm"]}">
-      <input type="hidden" name="x-amz-date" value="#{stub_presgined_post.fields["x-amz-date"]}">
-      <input type="hidden" name="Policy" value="#{stub_presgined_post.fields["policy"]}">
-      <input type="hidden" name="x-amz-signature" value="#{stub_presgined_post.fields["x-amz-signature"]}">
-      <input type="hidden" name="x-amz-security-token" value="#{stub_presgined_post.fields["x-amz-security-token"]}">
+      #{presigned_post_fields.join("\n")}
       <label for="file">File:</label>
       <input type="file" id="file" name="file" accept="image/jpeg">
       <input type="submit" value="Submit">
