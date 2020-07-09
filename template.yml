@@ -92,6 +92,9 @@ Resources:
             BucketName: !Ref ThumbnailsBucket
   ProcessFormBucket:
     Type: AWS::S3::Bucket
+    LambdaConfiguration:
+      Event: s3::ObjectCreated:*
+      Function: !Ref ConvertImageFunction
   ThumbnailsBucket:
     Type: AWS::S3::Bucket
   ConvertImageFunctionCanReadProcessForm:
