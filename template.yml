@@ -71,10 +71,49 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
+  ConvertImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: image_processing
+      Handler: create_thumbnails.ImageProcessing::CreateThumbnails.handler
+      Runtime: ruby2.7
+      Events:
+        ImageUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref ProcessFormBucket
+            Events: s3::ObjectCreated:*
+      Timeout: 600
+      Environment:
+        Variables:
+          OUTPUT_BUCKET: !Ref ThumbnailsBucket
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref ThumbnailsBucket
   ProcessFormBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: basic-ruby-process-form
+  ThumbnailsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: basic-ruby-thumbnails
+  ConvertImageFunctionCanReadProcessForm:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ConvertImageFunctionCanReadProcessForm
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3::GetObject"
+            Resource:
+              - !Sub "${ProcessFormBucket.Arn}/*"
+      Roles:
+        - !Ref ConvertImageFunctionRole
+
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
