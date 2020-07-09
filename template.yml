@@ -92,12 +92,8 @@ Resources:
             BucketName: !Ref ThumbnailsBucket
   ProcessFormBucket:
     Type: AWS::S3::Bucket
-    Properties:
-      BucketName: basic-ruby-process-form
   ThumbnailsBucket:
     Type: AWS::S3::Bucket
-    Properties:
-      BucketName: basic-ruby-thumbnails
   ConvertImageFunctionCanReadProcessForm:
     Type: AWS::IAM::Policy
     Properties:

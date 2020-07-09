@@ -14,6 +14,7 @@ phases:
       - bundle install
       - bundle exec standardrb
       - bundle exec rspec
+      - echo $CODEBUILD_WEBHOOK_TRIGGER
   build:
     commands:
       - sam build
