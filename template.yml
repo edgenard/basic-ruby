@@ -80,6 +80,21 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
+      Events:
+        FileUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref ProcessFormBucket
+            Events: s3:ObjectCreated:*
+      Timeout: 600
+      Environment:
+        Variables:
+          OUTPUT_BUCKET: !Ref ThumbnailsBucket
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref ThumbnailsBucket
+  ThumbnailsBucket:
+    Type: AWS::S3::Bucket
   ProcessFormBucket:
     Type: AWS::S3::Bucket
 Outputs:
