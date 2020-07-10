@@ -71,6 +71,15 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
+  CreateThumbnailsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: image_processing/
+      Handler: create_thumbnails.ImageProcessing::CreateThumbnails.handler
+      Runtime: ruby2.7
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
   ProcessFormBucket:
     Type: AWS::S3::Bucket
 Outputs:
@@ -92,3 +101,6 @@ Outputs:
   ProcessFormBucket:
     Description: "S3 Bucket that stores form submissions"
     Value: !Ref ProcessFormBucket
+  CreateThumbnailsFunction:
+    Description: "Function to create thumbnails from the image uploaed by users"
+    Value: !GetAtt CreateThumbnailsFunction.Arn
