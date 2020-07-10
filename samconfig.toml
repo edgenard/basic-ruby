@@ -2,7 +2,7 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "basic-ruby"
+stack_name = "basic-ruby-create-thumbnails"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-125yxfjpi5k0i"
 s3_prefix = "basic-ruby"
 region = "us-east-1"
