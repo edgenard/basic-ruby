@@ -20,4 +20,4 @@ phases:
       - sam build
   post_build:
     commands:
-      sam deploy --parameter-overrides UrlExpiration=$UrlExpiration MaxFileSize=$MaxFileSize
+      sam deploy --parameter-overrides UrlExpiration=$UrlExpiration MaxFileSize=$MaxFileSize --stack-name="basic-ruby-${CODEBUILD_GIT_BRANCH}"
