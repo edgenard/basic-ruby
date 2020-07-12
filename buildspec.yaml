@@ -11,6 +11,7 @@ phases:
       ruby: 2.7
   pre_build:
     commands:
+      - . ./extra-env.sh
       - bundle install
       - bundle exec standardrb
       - bundle exec rspec
