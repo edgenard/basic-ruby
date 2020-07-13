@@ -4,6 +4,7 @@ env:
   variables:
     UrlExpiration: "1"
     MaxFileSize: "5"
+    AppName: 'basic-ruby'
 
 phases:
   install:
