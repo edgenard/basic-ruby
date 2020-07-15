@@ -1,6 +1,6 @@
 require "spec_helper.rb"
 
-require_relative "../../scripts/deployment_variables"
+require_relative "../../scripts/deploy"
 
 RSpec.describe "set_stack_name" do
   context "when the branch is not master" do
@@ -29,7 +29,6 @@ RSpec.describe "set_stack_name" do
     let(:good_stack_name) { "special-app-name-weird-branch-name" }
 
     before do
-      ENV["STACK_NAME"] = ""
       ENV["CODEBUILD_GIT_BRANCH"] = "weird/branch/name"
       ENV["AppName"] = "special%app_name"
     end

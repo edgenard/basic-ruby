@@ -29,7 +29,6 @@ fi
 export CODEBUILD_PROJECT=${CODEBUILD_BUILD_ID%:$CODEBUILD_LOG_PATH}
 export CODEBUILD_BUILD_URL=https://$AWS_DEFAULT_REGION.console.aws.amazon.com/codebuild/home?region=$AWS_DEFAULT_REGION#/builds/$CODEBUILD_BUILD_ID/view/new
 
-export STACK_NAME=basic-ruby-${CODEBUILD_GIT_BRANCH}
 
 echo "==> AWS CodeBuild Extra Environment Variables:"
 echo "==> CI = $CI"

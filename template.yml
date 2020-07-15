@@ -24,8 +24,23 @@ Parameters:
     MinValue: 1
     MaxValue: 20
     ConstraintDescription: The minimum expiration time for a link 1 minute. The maxium expiration time is 20 minutes.
+  DepEnv:
+    Type: String
+    Description: Which environment do you want to deploy to?(dev, prod)
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+  FeatureBranch:
+    Type: String
+    Description: Provide the name of the feature branch if this is not being built from master
+    Default: ''
 
 Resources:
+  BasicRubyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub basic-ruby-${DepEnv}
   ShowFormFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -38,6 +53,7 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+            RestApiId: !Ref BasicRubyApi
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -61,6 +77,7 @@ Resources:
           Properties:
             Path: /confirm
             Method: get
+            RestApiId: !Ref BasicRubyApi
       Policies:
         - S3FullAccessPolicy:
             BucketName: !Ref ProcessFormBucket
@@ -115,9 +132,9 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  ShowFormApi:
+  BasicRubyApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${BasicRubyApi}.execute-api.${AWS::Region}.amazonaws.com/basic-ruby-${DepEnv}/hello/"
   ShowFormFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt ShowFormFunction.Arn
