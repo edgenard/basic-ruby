@@ -148,7 +148,7 @@ Outputs:
     Description: "S3 Bucket that stores form submissions"
     Value: !Ref ProcessFormBucket
   CreateThumbnailsFunction:
-    Description: "Function to create thumbnails from the image uploaed by users"
+    Description: "Function to create thumbnails from the image uploaded by users"
     Value: !GetAtt CreateThumbnailsFunction.Arn
   ThumbnailsBucket:
     Description: "An S3 bucket that stores the thumbnails"
