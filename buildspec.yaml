@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    UrlExpiration: "1"
+    UrlExpiration: "3"
     MaxFileSize: "5"
     AppName: 'basic-ruby'
 

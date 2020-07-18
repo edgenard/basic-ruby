@@ -3,47 +3,47 @@
 export CI=true
 export CODEBUILD=true
 
-export CODEBUILD_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+export ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 
-export CODEBUILD_GIT_BRANCH="$(git symbolic-ref HEAD --short 2>/dev/null)"
-if [ "$CODEBUILD_GIT_BRANCH" = "" ] ; then
+export GIT_BRANCH="$(git symbolic-ref HEAD --short 2>/dev/null)"
+if [ "$GIT_BRANCH" = "" ] ; then
   echo "git symbolic-ref HEAD did not work"
-  CODEBUILD_GIT_BRANCH="$(git branch -a --contains HEAD | sed -n 2p | awk '{ printf $1 }')";
-  export CODEBUILD_GIT_BRANCH=${CODEBUILD_GIT_BRANCH#remotes/origin/};
+  GIT_BRANCH="$(git branch -a --contains HEAD | sed -n 2p | awk '{ printf $1 }')";
+  export GIT_BRANCH=${GIT_BRANCH#remotes/origin/};
 fi
 
-export CODEBUILD_GIT_CLEAN_BRANCH="$(echo $CODEBUILD_GIT_BRANCH | tr '/' '.')"
-export CODEBUILD_GIT_ESCAPED_BRANCH="$(echo $CODEBUILD_GIT_CLEAN_BRANCH | sed -e 's/[]\/$*.^[]/\\\\&/g')"
+export GIT_CLEAN_BRANCH="$(echo $GIT_BRANCH | tr '/' '.')"
+export GIT_ESCAPED_BRANCH="$(echo $GIT_CLEAN_BRANCH | sed -e 's/[]\/$*.^[]/\\\\&/g')"
 export GIT_MESSAGE="$(git log -1 --pretty=%B)"
-export CODEBUILD_GIT_AUTHOR="$(git log -1 --pretty=%an)"
-export CODEBUILD_GIT_AUTHOR_EMAIL="$(git log -1 --pretty=%ae)"
-export CODEBUILD_GIT_COMMIT="$(git log -1 --pretty=%H)"
-export CODEBUILD_GIT_SHORT_COMMIT="$(git log -1 --pretty=%h)"
-export CODEBUILD_GIT_TAG="$(git describe --tags --exact-match 2>/dev/null)"
-export CODEBUILD_GIT_MOST_RECENT_TAG="$(git describe --tags --abbrev=0)"
+export GIT_AUTHOR="$(git log -1 --pretty=%an)"
+export GIT_AUTHOR_EMAIL="$(git log -1 --pretty=%ae)"
+export GIT_COMMIT="$(git log -1 --pretty=%H)"
+export GIT_SHORT_COMMIT="$(git log -1 --pretty=%h)"
+export GIT_TAG="$(git describe --tags --exact-match 2>/dev/null)"
+export GIT_MOST_RECENT_TAG="$(git describe --tags --abbrev=0)"
 
 export PULL_REQUEST=false
-if [ "${CODEBUILD_GIT_BRANCH#pr-}" != "$CODEBUILD_GIT_BRANCH" ] ; then
-  export PULL_REQUEST=${CODEBUILD_GIT_BRANCH#pr-};
+if [ "${GIT_BRANCH#pr-}" != "$GIT_BRANCH" ] ; then
+  export PULL_REQUEST=${GIT_BRANCH#pr-};
 fi
 
-export CODEBUILD_PROJECT=${CODEBUILD_BUILD_ID%:$CODEBUILD_LOG_PATH}
-export CODEBUILD_BUILD_URL=https://$AWS_DEFAULT_REGION.console.aws.amazon.com/codebuild/home?region=$AWS_DEFAULT_REGION#/builds/$CODEBUILD_BUILD_ID/view/new
+export PROJECT=${BUILD_ID%:$LOG_PATH}
+export BUILD_URL=https://$AWS_DEFAULT_REGION.console.aws.amazon.com/codebuild/home?region=$AWS_DEFAULT_REGION#/builds/$BUILD_ID/view/new
 
 
 echo "==> AWS CodeBuild Extra Environment Variables:"
 echo "==> CI = $CI"
 echo "==> CODEBUILD = $CODEBUILD"
-echo "==> CODEBUILD_ACCOUNT_ID = $CODEBUILD_ACCOUNT_ID"
-echo "==> CODEBUILD_GIT_AUTHOR = $CODEBUILD_GIT_AUTHOR"
-echo "==> CODEBUILD_GIT_AUTHOR_EMAIL = $CODEBUILD_GIT_AUTHOR_EMAIL"
-echo "==> CODEBUILD_GIT_BRANCH = $CODEBUILD_GIT_BRANCH"
-echo "==> CODEBUILD_GIT_CLEAN_BRANCH = $CODEBUILD_GIT_CLEAN_BRANCH"
-echo "==> CODEBUILD_GIT_ESCAPED_BRANCH = $CODEBUILD_GIT_ESCAPED_BRANCH"
-echo "==> CODEBUILD_GIT_COMMIT = $CODEBUILD_GIT_COMMIT"
-echo "==> CODEBUILD_GIT_SHORT_COMMIT = $CODEBUILD_GIT_SHORT_COMMIT"
+echo "==> ACCOUNT_ID = $ACCOUNT_ID"
+echo "==> GIT_AUTHOR = $GIT_AUTHOR"
+echo "==> GIT_AUTHOR_EMAIL = $GIT_AUTHOR_EMAIL"
+echo "==> GIT_BRANCH = $GIT_BRANCH"
+echo "==> GIT_CLEAN_BRANCH = $GIT_CLEAN_BRANCH"
+echo "==> GIT_ESCAPED_BRANCH = $GIT_ESCAPED_BRANCH"
+echo "==> GIT_COMMIT = $GIT_COMMIT"
+echo "==> GIT_SHORT_COMMIT = $GIT_SHORT_COMMIT"
 echo "==> GIT_MESSAGE = $GIT_MESSAGE"
-echo "==> CODEBUILD_GIT_TAG = $CODEBUILD_GIT_TAG"
-echo "==> CODEBUILD_GIT_MOST_RECENT_TAG = $CODEBUILD_GIT_MOST_RECENT_TAG"
-echo "==> CODEBUILD_PROJECT = $CODEBUILD_PROJECT"
+echo "==> GIT_TAG = $GIT_TAG"
+echo "==> GIT_MOST_RECENT_TAG = $GIT_MOST_RECENT_TAG"
+echo "==> PROJECT = $PROJECT"
 echo "==> PULL_REQUEST = $PULL_REQUEST"
