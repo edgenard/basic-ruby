@@ -50,32 +50,32 @@ RSpec.describe DeploymentScript do
       end
     end
 
-    context "when commit message indicates a merge commit" do
-      let(:branch_name) { "branch_name" }
-      let(:feature_branch_stack_name) { "app-name-branch-name" }
-      let(:commit_message) { "Merge pull request #99 from repo/branch_name" }
-      let(:cloudformation_get_buckets_command) {
-        "aws cloudformation describe-stacks --stack-name " \
-        "#{feature_branch_stack_name} --query "\
-        "\"Stacks[].Outputs[contains(OutputKey, \'Bucket\')][OutputValue]\""
-      }
-      let(:s3_empty_bucket_command) { "aws s3 rm s3://#{bucket_1} --recursive" }
+    # context "when commit message indicates a merge commit" do
+    #   let(:branch_name) { "branch_name" }
+    #   let(:feature_branch_stack_name) { "app-name-branch-name" }
+    #   let(:commit_message) { "Merge pull request #99 from repo/branch_name" }
+    #   let(:cloudformation_get_buckets_command) {
+    #     "aws cloudformation describe-stacks --stack-name " \
+    #     "#{feature_branch_stack_name} --query "\
+    #     "\"Stacks[].Outputs[contains(OutputKey, \'Bucket\')][OutputValue]\""
+    #   }
+    #   let(:s3_empty_bucket_command) { "aws s3 rm s3://#{bucket_1} --recursive" }
 
-      let(:cloudformation_delete_stack_command) {
-        "aws cloudformation delete-stack --stack-name #{feature_branch_stack_name}"
-      }
+    #   let(:cloudformation_delete_stack_command) {
+    #     "aws cloudformation delete-stack --stack-name #{feature_branch_stack_name}"
+    #   }
 
-      before do
-        expect(DeploymentScript).to receive(:`).with(cloudformation_get_buckets_command).and_return([[["bucket-name-1", "bucket-name-2"]]].to_json)
-      end
+    #   before do
+    #     expect(DeploymentScript).to receive(:`).with(cloudformation_get_buckets_command).and_return([[["bucket-name-1", "bucket-name-2"]]].to_json)
+    #   end
 
-      it "empties any S3 Buckets and deletes the stack" do
-        expect(DeploymentScript).to receive(:`).with("aws s3 rm s3://bucket-name-1 --recursive")
-        expect(DeploymentScript).to receive(:`).with("aws s3 rm s3://bucket-name-2 --recursive")
-        expect(DeploymentScript).to receive(:`).with(cloudformation_delete_stack_command)
+    #   it "empties any S3 Buckets and deletes the stack" do
+    #     expect(DeploymentScript).to receive(:`).with("aws s3 rm s3://bucket-name-1 --recursive")
+    #     expect(DeploymentScript).to receive(:`).with("aws s3 rm s3://bucket-name-2 --recursive")
+    #     expect(DeploymentScript).to receive(:`).with(cloudformation_delete_stack_command)
 
-        DeploymentScript.delete_stack_on_merge(app_name: app_name, branch_name: branch_name, commit_message: commit_message)
-      end
-    end
+    #     DeploymentScript.delete_stack_on_merge(app_name: app_name, branch_name: branch_name, commit_message: commit_message)
+    #   end
+    # end
   end
 end
