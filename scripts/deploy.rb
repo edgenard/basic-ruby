@@ -24,7 +24,7 @@ module DeploymentScript
 
   def self.delete_stack_on_merge(app_name:, branch_name:, commit_message:)
     return nil unless merge_commit?(commit_message)
-    stack_name = set_stack_name(app_name: app_name, branch_name: "feature-stacks", commit_message: "some-message") # Use fake commit message to make sure to get the stack name with branch suffix
+    stack_name = set_stack_name(app_name: app_name, branch_name: branch_name, commit_message: "some-message") # Use fake commit message to make sure to get the stack name with branch suffix
     buckets = JSON.parse(`aws cloudformation describe-stacks --stack-name #{stack_name} --query "Stacks[].Outputs[?contains(OutputKey, 'Bucket')][OutputValue]"`).flatten
     buckets.each { |b| `aws s3 rm s3://#{b} --recursive` }
     `aws cloudformation delete-stack --stack-name #{stack_name}`

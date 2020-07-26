@@ -21,4 +21,4 @@ phases:
       - sam build
   post_build:
     commands:
-      - ruby ./scripts/deploy.rb
+      - sam deploy
