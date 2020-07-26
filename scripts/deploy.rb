@@ -38,5 +38,5 @@ end
 # When run from the command line
 if $0 == __FILE__
   DeploymentScript.delete_stack_on_merge(app_name: ENV["AppName"], branch_name: ENV["GIT_BRANCH"], commit_message: ENV["GIT_MESSAGE"])
-  # DeploymentScript.deploy
+  DeploymentScript.deploy
 end
