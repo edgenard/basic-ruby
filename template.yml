@@ -24,23 +24,20 @@ Parameters:
     MinValue: 1
     MaxValue: 20
     ConstraintDescription: The minimum expiration time for a link 1 minute. The maxium expiration time is 20 minutes.
-  DepEnv:
+  AppStage:
     Type: String
-    Description: Which environment do you want to deploy to?(dev, prod)
-    Default: dev
-    AllowedValues:
-      - dev
-      - prod
-  FeatureBranch:
-    Type: String
-    Description: Provide the name of the feature branch if this is not being built from master
-    Default: ''
+    Description: API Gateway stage, used as a prefix for the endpoint URLs
+    Default: api
+    AllowedPattern: ^[A-Za-z]+$
+    MaxLength: 10
+    MinLength: 1
+    ConstraintDescription: "1-10 Latin letters"
 
 Resources:
   BasicRubyApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: !Sub basic-ruby-${DepEnv}
+      StageName: !Ref AppStage
   ShowFormFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -51,7 +48,7 @@ Resources:
         ShowForm:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /
             Method: get
             RestApiId: !Ref BasicRubyApi
       AutoPublishAlias: live
@@ -88,53 +85,17 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
-  CreateThumbnailsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: image_processing/
-      Handler: create_thumbnails.ImageProcessing::CreateThumbnails.handler
-      Runtime: ruby2.7
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Type: AllAtOnce
-      Events:
-        FileUploaded:
-          Type: S3
-          Properties:
-            Bucket: !Ref ProcessFormBucket
-            Events: s3:ObjectCreated:*
-      Timeout: 600
-      Environment:
-        Variables:
-          OUTPUT_BUCKET: !Ref ThumbnailsBucket
-      Policies:
-        - S3FullAccessPolicy:
-            BucketName: !Ref ThumbnailsBucket
-  ThumbnailsBucket:
-    Type: AWS::S3::Bucket
   ProcessFormBucket:
     Type: AWS::S3::Bucket
-  CreateThumbnailsFunctionsCanReadProcessForm:
-    Type: AWS::IAM::Policy
     Properties:
-      PolicyName: CreateThumbnailsFunctionCanReadProcessForm
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - "s3:GetOBject"
-            Resource:
-              - !Sub "${ProcessFormBucket.Arn}/*"
-      Roles:
-      - !Ref CreateThumbnailsFunctionRole
+      BucketName: basic-ruby-process-form
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   BasicRubyApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${BasicRubyApi}.execute-api.${AWS::Region}.amazonaws.com/basic-ruby-${DepEnv}/hello/"
+    Value: !Sub "https://${BasicRubyApi}.execute-api.${AWS::Region}.amazonaws.com/${AppStage}/"
   ShowFormFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt ShowFormFunction.Arn
@@ -147,9 +108,3 @@ Outputs:
   ProcessFormBucket:
     Description: "S3 Bucket that stores form submissions"
     Value: !Ref ProcessFormBucket
-  CreateThumbnailsFunction:
-    Description: "Function to create thumbnails from the image uploaded by users"
-    Value: !GetAtt CreateThumbnailsFunction.Arn
-  ThumbnailsBucket:
-    Description: "An S3 bucket that stores the thumbnails"
-    Value: !Ref ThumbnailsBucket
