@@ -21,4 +21,4 @@ phases:
       - sam build
   post_build:
     commands:
-      - sam deploy
+      - sam deploy --no-fail-on-empty-changeset
