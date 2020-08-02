@@ -79,9 +79,30 @@ Resources:
         - S3FullAccessPolicy:
             BucketName: !Ref ProcessFormBucket
       Environment:
-        Variables:
+       Variables:
           PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
           URL_EXPIRATION: !Ref UrlExpiration
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+  CreateThumbnailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: image_processing/
+      Handler: create_thumbnails.ImageProcessing::CreateThumbnail.handler
+      Runtime: ruby2.7
+      Events:
+        ImageUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref ProcessFormBucket
+            Events: s3:ObjectCreated:*
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref ThumbnailBucket
+      Environment:
+        Variables:
+          THUMBNAIL_BUCKET: !Ref ThumbnailBucket
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -89,18 +110,39 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: basic-ruby-process-form
+  ThumbnailBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: basic-ruby-create-thumbnail
+  CreateThumbnailFunctionCanReadProcessFormBucket:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CreateThumbnailFunctionCanReadProcessFormBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3:GetObject"
+            Resource:
+              - !Sub "${ProcessFormBucket.Arn}/*"
+      Roles:
+        - !Ref CreateThumbnailFunctionRole
+
+
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   BasicRubyApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Description: "API Gateway endpoint URL for live stage for ShowForm function"
     Value: !Sub "https://${BasicRubyApi}.execute-api.${AWS::Region}.amazonaws.com/${AppStage}/"
   ShowFormFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt ShowFormFunction.Arn
   ShowFormFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
+    Description: "Implicit IAM Role created for Show Form function"
     Value: !GetAtt ShowFormFunctionRole.Arn
   ConfirmUploadFunction:
     Description: "Function to process form submissions"
@@ -108,3 +150,14 @@ Outputs:
   ProcessFormBucket:
     Description: "S3 Bucket that stores form submissions"
     Value: !Ref ProcessFormBucket
+  CreateThumbnailFunction:
+    Description: "Function to create image thumbnails"
+    Value: !GetAtt CreateThumbnailFunction.Arn
+  ThumbnailBucket:
+    Description: "Bucket to store image thumbnails"
+    Value: !Ref ThumbnailBucket
+
+
+    # CreateThumbnailsFunction would need ProcessFormBucket to exist in order have the policy to read it
+    # ProcessFormBucket needs CreateThumbnailFunction to exist in order to create Bucket Lifecycle event to invoke CreateThumbnailFunction
+    # CreatThumbnailFunction needs Process
