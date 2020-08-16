@@ -17,7 +17,7 @@ module ImageProcessing
       thumbnail_file = File.new(THUMBNAIL_FILE_PATH, "w+")
       FileUtils.cp(original_file, thumbnail_file)
 
-      client.put_object(acl: "private", body: THUMBNAIL_FILE_PATH, bucket: thumbnail_bucket, key: uploaded_key)
+      client.put_object(acl: "private", body: thumbnail_file, bucket: thumbnail_bucket, key: uploaded_key)
     rescue => e
       p e
       p e.message
