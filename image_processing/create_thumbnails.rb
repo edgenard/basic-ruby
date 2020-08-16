@@ -6,7 +6,7 @@ module ImageProcessing
       uploaded_bucket = event["Records"][0]["s3"]["bucket"]["name"]
       uploaded_key = event["Records"][0]["s3"]["object"]["key"]
       client.get_object(response_target: "/tmp/original_file.jpg", bucket: uploaded_bucket, key: uploaded_key)
-      original_file = File.open("/tmp/original_file.jpg")
+      # original_file = File.open("/tmp/original_file.jpg")
     rescue => e
       p e
       p e.message
