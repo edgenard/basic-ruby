@@ -9,5 +9,9 @@
     "AWS_REGION": "us-east-1",
     "URL_EXPIRATION": "3",
     "MAX_FILE_SIZE": "10"
+  },
+  "CreateThumbnailFunction": {
+    "AWS_REGION": "us-east-1",
+    "THUMBNAIL_BUCKET": "basic-ruby-create-thumbnail"
   }
 }

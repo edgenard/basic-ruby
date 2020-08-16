@@ -91,6 +91,7 @@ Resources:
       CodeUri: image_processing/
       Handler: create_thumbnails.ImageProcessing::CreateThumbnail.handler
       Runtime: ruby2.7
+      Timeout: 600
       Events:
         ImageUploaded:
           Type: S3
