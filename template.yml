@@ -77,10 +77,10 @@ Resources:
             RestApiId: !Ref BasicRubyApi
       Policies:
         - S3FullAccessPolicy:
-            BucketName: !Ref ProcessFormBucket
+            BucketName: !Ref ThumbnailBucket
       Environment:
        Variables:
-          PROCESS_FORM_BUCKET: !Ref ProcessFormBucket
+          IMAGE_DOWNLOAD_BUCKET: !Ref ThumbnailBucket
           URL_EXPIRATION: !Ref UrlExpiration
       AutoPublishAlias: live
       DeploymentPreference:

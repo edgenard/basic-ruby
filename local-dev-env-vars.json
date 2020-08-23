@@ -1,6 +1,6 @@
 {
-  "ProcessFormFunction": {
-    "PROCESS_FORM_BUCKET": "basic-ruby-process-form",
+  "ConfirmUploadFunction": {
+    "IMAGE_DOWNLOAD_BUCKET": "basic-ruby-create-thumbnail",
     "AWS_REGION": "us-east-1",
     "URL_EXPIRATION": "3"
   },

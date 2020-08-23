@@ -6,7 +6,7 @@ module UserForm
       object_key = event["queryStringParameters"]["key"]
       download_url = Aws::S3::Presigner.new(region: ENV["AWS_REGION"]).presigned_url(
         :get_object,
-        bucket: ENV["PROCESS_FORM_BUCKET"],
+        bucket: ENV["IMAGE_DOWNLOAD_BUCKET"],
         key: object_key,
         expires_in: ENV["URL_EXPIRATION"].to_i * 60
       )

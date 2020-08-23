@@ -8,7 +8,7 @@ RSpec.describe UserForm::ConfirmUpload do
   }
   let(:region) { "test-region" }
   let(:key) { confirm_upload_event["queryStringParameters"]["key"] }
-  let(:bucket) { "test-bucket" }
+  let(:bucket) { "image-download" }
   let(:url_expiration_time) { 1 }
 
   let(:s3_presigned_url) do
@@ -18,8 +18,9 @@ RSpec.describe UserForm::ConfirmUpload do
 
   before do
     ENV["AWS_REGION"] = region
-    ENV["PROCESS_FORM_BUCKET"] = bucket
+    ENV["PROCESS_FORM_BUCKET"] = "test-bucket"
     ENV["URL_EXPIRATION"] = url_expiration_time.to_s
+    ENV["IMAGE_DOWNLOAD_BUCKET"] = bucket
   end
 
   let(:success_html) do
