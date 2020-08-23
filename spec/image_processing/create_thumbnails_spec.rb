@@ -16,7 +16,7 @@ RSpec.describe ImageProcessing::CreateThumbnail do
   before do
     ENV["THUMBNAIL_BUCKET"] = "test-bucket"
     allow(Aws::S3::Client).to receive(:new).and_return(s3_client_stub)
-    s3_client_stub.stub_responses(:get_object, {body: 'Hello World'} )
+    s3_client_stub.stub_responses(:get_object, {body: "Hello World"})
   end
 
   it "uploads the image to the thumbnails bucket" do
@@ -24,7 +24,15 @@ RSpec.describe ImageProcessing::CreateThumbnail do
     ImageProcessing::CreateThumbnail.handler(event: s3_put_event, context: fake_context)
   end
 
-  it "deletes the temporary files" do
+  it "deletes the temporary files when the upload succeeds" do
+    ImageProcessing::CreateThumbnail.handler(event: s3_put_event, context: fake_context)
+
+    expect(thumbnail_file.size).to eq(0)
+    expect(original_file.size).to eq(0)
+  end
+
+  it "deletes the temporary files when the upload fails" do
+    s3_client_stub.stub_responses(:put_object, "PermissionDenied")
     ImageProcessing::CreateThumbnail.handler(event: s3_put_event, context: fake_context)
 
     expect(thumbnail_file.size).to eq(0)
