@@ -18,9 +18,6 @@ module ImageProcessing
       FileUtils.cp(original_file, thumbnail_file)
 
       client.put_object(acl: "private", body: thumbnail_file, bucket: thumbnail_bucket, key: uploaded_key)
-    rescue => e
-      p e
-      p e.message
     ensure
       File.truncate(THUMBNAIL_FILE_PATH, 0)
       File.truncate(ORIGINAL_FILE_PATH, 0)

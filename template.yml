@@ -32,7 +32,12 @@ Parameters:
     MaxLength: 10
     MinLength: 1
     ConstraintDescription: "1-10 Latin letters"
-
+  ContactEmail:
+    Type: String
+    Description: "Email to notify when CreateThumbnailFunction fails"
+    Default: ''
+Conditions:
+  ContactEmailSet: !Not [ !Equals ['', !Ref ContactEmail]]
 Resources:
   BasicRubyApi:
     Type: AWS::Serverless::Api
@@ -107,6 +112,9 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
+      DeadLetterQueue:
+        Type: SNS
+        TargetArn: !Ref NotifyAdmins
   ProcessFormBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -129,6 +137,16 @@ Resources:
               - !Sub "${ProcessFormBucket.Arn}/*"
       Roles:
         - !Ref CreateThumbnailFunctionRole
+  NotifyAdmins:
+    Type: AWS::SNS::Topic
+  AlarmNotifySubscription:
+    Type: AWS::SNS::Subscription
+    Condition: ContactEmailSet
+    Properties:
+      Endpoint: !Ref ContactEmail
+      Protocol: email
+      TopicArn: !Ref NotifyAdmins
+
 
 
 

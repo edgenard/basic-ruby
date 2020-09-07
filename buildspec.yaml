@@ -21,4 +21,4 @@ phases:
       - sam build
   post_build:
     commands:
-      - sam deploy --no-fail-on-empty-changeset
+      - sam deploy --no-fail-on-empty-changeset --parameter-overrides UrlExpiration=$UrlExpiration
