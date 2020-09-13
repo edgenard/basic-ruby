@@ -12,7 +12,6 @@ module ImageProcessing
       uploaded_bucket = event["Records"][0]["s3"]["bucket"]["name"]
       uploaded_key = event["Records"][0]["s3"]["object"]["key"]
       client.get_object(response_target: ORIGINAL_FILE_PATH, bucket: uploaded_bucket, key: uploaded_key)
-
       original_file = File.open(ORIGINAL_FILE_PATH)
       thumbnail_file = File.new(THUMBNAIL_FILE_PATH, "w+")
       FileUtils.cp(original_file, thumbnail_file)

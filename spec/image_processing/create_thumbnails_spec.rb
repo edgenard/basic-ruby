@@ -33,9 +33,11 @@ RSpec.describe ImageProcessing::CreateThumbnail do
 
   it "deletes the temporary files when the upload fails" do
     s3_client_stub.stub_responses(:put_object, "PermissionDenied")
-    ImageProcessing::CreateThumbnail.handler(event: s3_put_event, context: fake_context)
-
-    expect(thumbnail_file.size).to eq(0)
-    expect(original_file.size).to eq(0)
+    begin
+      ImageProcessing::CreateThumbnail.handler(event: s3_put_event, context: fake_context)
+    rescue
+      expect(thumbnail_file.size).to eq(0)
+      expect(original_file.size).to eq(0)
+    end
   end
 end
