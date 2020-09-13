@@ -36,6 +36,11 @@ Parameters:
     Type: String
     Description: "Email to notify when CreateThumbnailFunction fails"
     Default: ''
+  ThumbnailWidth:
+    Type: Number
+    Default: 300
+    MinValue: 10
+    MaxValue: 1000
 Conditions:
   ContactEmailSet: !Not [ !Equals ['', !Ref ContactEmail]]
 Resources:
@@ -109,6 +114,7 @@ Resources:
       Environment:
         Variables:
           THUMBNAIL_BUCKET: !Ref ThumbnailBucket
+          THUMBNAIL_WIDTH: !Ref ThumbnailWidth
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce

@@ -12,6 +12,7 @@
   },
   "CreateThumbnailFunction": {
     "AWS_REGION": "us-east-1",
-    "THUMBNAIL_BUCKET": "basic-ruby-create-thumbnail"
+    "THUMBNAIL_BUCKET": "basic-ruby-create-thumbnail",
+    "THUMBNAIL_WIDTH": 300
   }
 }
