@@ -1,7 +1,8 @@
 require "aws-sdk-s3"
 require "fileutils"
+require "image_processing"
 
-module ImageProcessing
+module ImageResizing
   class CreateThumbnail
     ORIGINAL_FILE_PATH = "/tmp/original_file.jpg"
     THUMBNAIL_FILE_PATH = "/tmp/thumbnail.jpg"
@@ -14,6 +15,7 @@ module ImageProcessing
       client.get_object(response_target: ORIGINAL_FILE_PATH, bucket: uploaded_bucket, key: uploaded_key)
       original_file = File.open(ORIGINAL_FILE_PATH)
       thumbnail_file = File.new(THUMBNAIL_FILE_PATH, "w+")
+      ImageProcessing::Vips.source(original_file)
       FileUtils.cp(original_file, thumbnail_file)
 
       client.put_object(acl: "private", body: thumbnail_file, bucket: thumbnail_bucket, key: uploaded_key)

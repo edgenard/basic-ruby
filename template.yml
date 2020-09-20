@@ -99,7 +99,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: image_processing/
-      Handler: create_thumbnails.ImageProcessing::CreateThumbnail.handler
+      Handler: create_thumbnails.ImageResizing::CreateThumbnail.handler
       Runtime: ruby2.7
       Timeout: 600
       Events:
@@ -121,6 +121,8 @@ Resources:
       DeadLetterQueue:
         Type: SNS
         TargetArn: !Ref NotifyAdmins
+      Layers:
+        - arn:aws:lambda:us-east-1:443491358801:layer:rubyvips892-27:2
   ProcessFormBucket:
     Type: AWS::S3::Bucket
     Properties:
