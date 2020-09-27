@@ -13,10 +13,12 @@ RSpec.describe ImageResizing::CreateThumbnail do
   let(:fake_context) { FakeLambdaContext.new }
   let(:thumbnail_file) { File.open(ImageResizing::CreateThumbnail::THUMBNAIL_FILE_PATH) }
   let(:original_file) { File.open(ImageResizing::CreateThumbnail::ORIGINAL_FILE_PATH) }
+  let(:fixture_file) { File.open("spec/fixtures/duck.jpg") }
   before do
     ENV["THUMBNAIL_BUCKET"] = "test-bucket"
+    ENV["THUMBNAIL_WIDTH"] = "100"
     allow(Aws::S3::Client).to receive(:new).and_return(s3_client_stub)
-    s3_client_stub.stub_responses(:get_object, {body: "Hello World"})
+    s3_client_stub.stub_responses(:get_object, {body: fixture_file})
   end
 
   it "uploads the image to the thumbnails bucket" do
